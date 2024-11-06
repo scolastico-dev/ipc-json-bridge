@@ -14,7 +14,6 @@
     "README.md"
   ],
   "scripts": {
-    "postinstall": "go mod download",
     "build:linux:amd64": "GOOS=linux GOARCH=amd64 go build -o bin/linux/amd64/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
     "build:linux:arm": "GOOS=linux GOARCH=arm go build -o bin/linux/arm/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
     "build:linux:arm64": "GOOS=linux GOARCH=arm64 go build -o bin/linux/arm64/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
