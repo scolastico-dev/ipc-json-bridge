@@ -1,0 +1,39 @@
+{
+  "name": "ipc-json-bridge",
+  "version": "IN-DEV",
+  "description": "A CLI tool to bridge IPC calls to stdio using simple JSON commands.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "ipc-json-bridge": "src/index.js"
+  },
+  "files": [
+    "bin/",
+    "src/index.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "postinstall": "go mod download",
+    "build:linux:amd64": "GOOS=linux GOARCH=amd64 go build -o bin/linux/amd64/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
+    "build:linux:arm": "GOOS=linux GOARCH=arm go build -o bin/linux/arm/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
+    "build:linux:arm64": "GOOS=linux GOARCH=arm64 go build -o bin/linux/arm64/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
+    "build:linux:386": "GOOS=linux GOARCH=386 go build -o bin/linux/386/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
+    "build:linux": "npm run build:linux:amd64 && npm run build:linux:arm && npm run build:linux:arm64 && npm run build:linux:386",
+    "build:darwin:amd64": "GOOS=darwin GOARCH=amd64 go build -o bin/darwin/amd64/ipc-json-bridge src/main.go src/getPeerPID_noop.go",
+    "build:darwin:arm64": "GOOS=darwin GOARCH=arm64 go build -o bin/darwin/arm64/ipc-json-bridge src/main.go src/getPeerPID_noop.go",
+    "build:darwin": "npm run build:darwin:amd64 && npm run build:darwin:arm64",
+    "build:windows:amd64": "GOOS=windows GOARCH=amd64 go build -o bin/windows/amd64/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
+    "build:windows:386": "GOOS=windows GOARCH=386 go build -o bin/windows/386/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
+    "build:windows:arm": "GOOS=windows GOARCH=arm go build -o bin/windows/arm/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
+    "build:windows:arm64": "GOOS=windows GOARCH=arm64 go build -o bin/windows/arm64/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
+    "build:windows": "npm run build:windows:amd64 && npm run build:windows:386 && npm run build:windows:arm && npm run build:windows:arm64",
+    "build": "npm run build:linux && npm run build:darwin && npm run build:windows"
+  },
+  "keywords": [
+    "ipc",
+    "json",
+    "bridge",
+    "cli"
+  ]
+}
