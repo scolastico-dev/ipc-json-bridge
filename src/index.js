@@ -36,7 +36,7 @@ if (platformFolder === 'unsupported' || archFolder === 'unsupported') {
 const executablePath = path.join('bin', platformFolder, archFolder, 'ipc-json-bridge');
 
 // Run the executable with inherited stdio
-const result = spawnSync(executablePath, { stdio: 'inherit' });
+const result = spawnSync(executablePath, process.argv.slice(2), { stdio: 'inherit' });
 
 // Check if the process failed and log errors if any
 if (result.error) {

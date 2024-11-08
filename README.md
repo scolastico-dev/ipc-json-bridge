@@ -37,6 +37,7 @@ type Message struct {
   Error      string `json:"error,omitempty"`
   Details    string `json:"details,omitempty"`
   Socket     string `json:"socket,omitempty"`
+  Version    int    `json:"version,omitempty"`
 }
 ```
 
@@ -58,10 +59,10 @@ This can look then look like this:
 ```sh
 StdOut: ┌─[/path/to/project]
 StdOut: └─▪ node src/index.js
-StdOut: {"socket":"/tmp/ipc_socket_9b5ab120-ccd0-420e-929a-cf6a1e6fc26d"}
+StdOut: {"socket":"/tmp/ipc_socket_9b5ab120-ccd0-420e-929a-cf6a1e6fc26d", "version": 1}
 StdOut: {"id":"5b8e49c1-dc06-4490-99be-f3612145a576","action":"connect","pid":123}
 StdIn:  {"id":"5b8e49c1-dc06-4490-99be-f3612145a576","msg":"dGhpcyBpcyBhbiBleGFtcGxlIQ=="}
-StdOut: {"id":"b8e49c1-dc06-4490-99be-f3612145a576","msg":"SGVsbG8gZnJvbSB0aGUgb3RoZXIgc2lkZSEK"}
+StdOut: {"id":"5b8e49c1-dc06-4490-99be-f3612145a576","msg":"SGVsbG8gZnJvbSB0aGUgb3RoZXIgc2lkZSEK"}
 StdIn:  {"id":"5b8e49c1-dc06-4490-99be-f3612145a576","msg":"QnllIQ==", "disconnect": true}
 StdOut: {"id":"5b8e49c1-dc06-4490-99be-f3612145a576","action":"disconnect"}
 ```

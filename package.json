@@ -2,6 +2,7 @@
   "name": "ipc-json-bridge",
   "version": "IN-DEV",
   "description": "A CLI tool to bridge IPC calls to stdio using simple JSON commands.",
+  "homepage": "https://github.com/scolastico-dev/ipc-json-bridge",
   "type": "module",
   "license": "MIT",
   "bin": {

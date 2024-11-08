@@ -25,6 +25,7 @@ type Message struct {
 	Error      string `json:"error,omitempty"`
 	Details    string `json:"details,omitempty"`
 	Socket     string `json:"socket,omitempty"`
+	Version    int    `json:"version,omitempty"`
 }
 
 type Client struct {
@@ -45,10 +46,12 @@ func main() {
 		// Generate temporary file
 		dir := os.TempDir()
 		socketPath = filepath.Join(dir, "ipc_socket_"+uuid.New().String())
-		logJSON(Message{
-			Socket: socketPath,
-		})
 	}
+
+	logJSON(Message{
+		Socket: socketPath,
+		Version: 1,
+	})
 
 	listener, err := createListener(socketPath)
 	if err != nil {
