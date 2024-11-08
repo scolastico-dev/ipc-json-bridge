@@ -2,38 +2,57 @@
   "name": "ipc-json-bridge",
   "version": "IN-DEV",
   "description": "A CLI tool to bridge IPC calls to stdio using simple JSON commands.",
-  "homepage": "https://github.com/scolastico-dev/ipc-json-bridge",
-  "type": "module",
+  "homepage": "https://scolastico-dev.github.io/ipc-json-bridge/",
   "license": "MIT",
+  "source": "src/sdk/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "bin": {
-    "ipc-json-bridge": "src/index.js"
+    "ipc-json-bridge": "src/launcher/index.mjs"
   },
   "files": [
     "bin/",
+    "dist/",
     "src/index.js",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "build:linux:amd64": "GOOS=linux GOARCH=amd64 go build -o bin/linux/amd64/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
-    "build:linux:arm": "GOOS=linux GOARCH=arm go build -o bin/linux/arm/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
-    "build:linux:arm64": "GOOS=linux GOARCH=arm64 go build -o bin/linux/arm64/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
-    "build:linux:386": "GOOS=linux GOARCH=386 go build -o bin/linux/386/ipc-json-bridge src/main.go src/getPeerPID_linux.go",
+    "build:linux:amd64": "GOOS=linux GOARCH=amd64 go build -o bin/linux/amd64/ipc-json-bridge src/bin/main.go src/bin/getPeerPID_linux.go",
+    "build:linux:arm": "GOOS=linux GOARCH=arm go build -o bin/linux/arm/ipc-json-bridge src/bin/main.go src/bin/getPeerPID_linux.go",
+    "build:linux:arm64": "GOOS=linux GOARCH=arm64 go build -o bin/linux/arm64/ipc-json-bridge src/bin/main.go src/bin/getPeerPID_linux.go",
+    "build:linux:386": "GOOS=linux GOARCH=386 go build -o bin/linux/386/ipc-json-bridge src/bin/main.go src/bin/getPeerPID_linux.go",
     "build:linux": "npm run build:linux:amd64 && npm run build:linux:arm && npm run build:linux:arm64 && npm run build:linux:386",
-    "build:darwin:amd64": "GOOS=darwin GOARCH=amd64 go build -o bin/darwin/amd64/ipc-json-bridge src/main.go src/getPeerPID_noop.go",
-    "build:darwin:arm64": "GOOS=darwin GOARCH=arm64 go build -o bin/darwin/arm64/ipc-json-bridge src/main.go src/getPeerPID_noop.go",
+    "build:darwin:amd64": "GOOS=darwin GOARCH=amd64 go build -o bin/darwin/amd64/ipc-json-bridge src/bin/main.go src/bin/getPeerPID_noop.go",
+    "build:darwin:arm64": "GOOS=darwin GOARCH=arm64 go build -o bin/darwin/arm64/ipc-json-bridge src/bin/main.go src/bin/getPeerPID_noop.go",
     "build:darwin": "npm run build:darwin:amd64 && npm run build:darwin:arm64",
-    "build:windows:amd64": "GOOS=windows GOARCH=amd64 go build -o bin/windows/amd64/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
-    "build:windows:386": "GOOS=windows GOARCH=386 go build -o bin/windows/386/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
-    "build:windows:arm": "GOOS=windows GOARCH=arm go build -o bin/windows/arm/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
-    "build:windows:arm64": "GOOS=windows GOARCH=arm64 go build -o bin/windows/arm64/ipc-json-bridge.exe src/main.go src/getPeerPID_noop.go",
+    "build:windows:amd64": "GOOS=windows GOARCH=amd64 go build -o bin/windows/amd64/ipc-json-bridge.exe src/bin/main.go src/bin/getPeerPID_noop.go",
+    "build:windows:386": "GOOS=windows GOARCH=386 go build -o bin/windows/386/ipc-json-bridge.exe src/bin/main.go src/bin/getPeerPID_noop.go",
+    "build:windows:arm": "GOOS=windows GOARCH=arm go build -o bin/windows/arm/ipc-json-bridge.exe src/bin/main.go src/bin/getPeerPID_noop.go",
+    "build:windows:arm64": "GOOS=windows GOARCH=arm64 go build -o bin/windows/arm64/ipc-json-bridge.exe src/bin/main.go src/bin/getPeerPID_noop.go",
     "build:windows": "npm run build:windows:amd64 && npm run build:windows:386 && npm run build:windows:arm && npm run build:windows:arm64",
-    "build": "npm run build:linux && npm run build:darwin && npm run build:windows"
+    "build:all": "npm run build:linux && npm run build:darwin && npm run build:windows",
+    "build:sdk": "parcel build . --no-cache",
+    "build:docs": "typedoc --highlightLanguages json --highlightLanguages go --highlightLanguages typescript --highlightLanguages sh --highlightLanguages js --out docs src/sdk/index.ts",
+    "build": "npm run build:sdk && npm run build:docs && npm run build:all"
   },
   "keywords": [
     "ipc",
     "json",
     "bridge",
     "cli"
-  ]
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "devDependencies": {
+    "@parcel/packager-ts": "2.12.0",
+    "@parcel/transformer-typescript-types": "2.12.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.9.0",
+    "parcel": "^2.12.0",
+    "typedoc": "^0.26.11",
+    "typescript": ">=3.0.0"
+  }
 }

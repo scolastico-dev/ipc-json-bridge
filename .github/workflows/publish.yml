@@ -26,15 +26,42 @@ jobs:
         run: sed -i "s/IN-DEV/$(echo $GITHUB_REF | sed 's/refs\/tags\///')/" package.json
       
       # Install dependencies
-      - name: Install dependencies
+      - name: Install go dependencies
         run: go mod download
-      
+      - name: Install npm dependencies
+        run: pnpm install
+
       # Build
       - name: Build
         run: pnpm build
-      
-      # Publish to registries
+
+      # Zip and Tar binaries
+      - name: Tar binaries
+        run: tar -czf binaries.tar.gz bin/
+      - name: Zip binaries
+        run: zip -r binaries.zip bin/
+
+      # Publish to npm, gh pages and releases
       - name: Publish package on NPM
         run: pnpm publish . --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_SECRET }}
+      - name: Publish Documentation
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs
+          branch: gh-pages
+      - name: Upload binaries tar to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: binaries.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: Upload binaries zip to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: binaries.zip
+          tag: ${{ github.ref }}
+          overwrite: true

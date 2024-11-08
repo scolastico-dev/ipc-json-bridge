@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Environment setup
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.23'
+      - name: Install pnpm
+        run: npm i -g pnpm
+      
+      # Install dependencies
+      - name: Install go dependencies
+        run: go mod download
+      - name: Install npm dependencies
+        run: pnpm install
+
+      # Build
+      - name: Build
+        run: pnpm build
+
+      # Upload artifacts
+      - name: Upload binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: binaries
+          path: bin/
+          retention-days: 1
+      - name: Upload dist
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+      - name: Upload docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: docs/
+          retention-days: 1

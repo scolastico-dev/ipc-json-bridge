@@ -1,1 +1,5 @@
-bin/
+/bin/
+/dist/
+/docs/
+node_modules/
+.parcel-cache/

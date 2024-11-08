@@ -33,7 +33,7 @@ if (platformFolder === 'unsupported' || archFolder === 'unsupported') {
 }
 
 // Construct the executable path
-const executablePath = path.join('bin', platformFolder, archFolder, 'ipc-json-bridge');
+const executablePath = path.join('bin', platformFolder, archFolder, platform === 'win32' ? 'ipc-json-bridge.exe' : 'ipc-json-bridge');
 
 // Run the executable with inherited stdio
 const result = spawnSync(executablePath, process.argv.slice(2), { stdio: 'inherit' });
