@@ -1,4 +1,4 @@
-# IPC JSON Bridge
+# [IPC JSON Bridge](https://github.com/scolastico-dev/ipc-json-bridge)
 
 A lightweight, cross-platform CLI tool written in Go that enables seamless IPC (Inter-Process Communication) via JSON messages over Unix domain sockets and Windows named pipes. This tool serves as a simpler, more flexible alternative to node-ipc, with added features like sender PID tracking on Unix systems.
 
