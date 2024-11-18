@@ -35,11 +35,33 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # Zip and Tar binaries
+      # Prepare release assets
+      - name: Create release assets directory
+        run: mkdir -p release-assets
       - name: Tar binaries
-        run: tar -czf binaries.tar.gz bin/
+        run: tar -czf release-assets/binaries.tar.gz bin/ LICENSE README.md
       - name: Zip binaries
-        run: zip -r binaries.zip bin/
+        run: zip -r release-assets/binaries.zip bin/ LICENSE README.md
+      - name: Copy each binary to release assets
+        run: |
+          cat <<EOF > copy-binaries.sh
+          #!/bin/bash
+          for os in bin/*; do
+              for arch in "\$os"/*; do
+                  if [ -f "\$arch/ipc-json-bridge.exe" ]; then
+                      os_name=\$(basename "\$os")
+                      arch_name=\$(basename "\$arch")
+                      cp "\$arch/ipc-json-bridge.exe" "release-assets/ipc-json-bridge-\$os_name-\$arch_name.exe"
+                  else
+                      os_name=\$(basename "\$os")
+                      arch_name=\$(basename "\$arch")
+                      cp "\$arch/ipc-json-bridge" "release-assets/ipc-json-bridge-\$os_name-\$arch_name"
+                  fi
+              done
+          done
+          EOF
+          bash copy-binaries.sh
+          rm copy-binaries.sh
 
       # Publish to npm, gh pages and releases
       - name: Publish package on NPM
@@ -51,17 +73,11 @@ jobs:
         with:
           folder: docs
           branch: gh-pages
-      - name: Upload binaries tar to release
+      - name: Upload release assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: binaries.tar.gz
+          file: release-assets/*
           tag: ${{ github.ref }}
           overwrite: true
-      - name: Upload binaries zip to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: binaries.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+          file_glob: true

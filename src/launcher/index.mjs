@@ -2,11 +2,9 @@ import { spawnSync } from 'child_process';
 import os from 'os';
 import path from 'path';
 
-// Determine platform-specific and architecture-specific subdirectory
 const platform = os.platform();
 const arch = os.arch();
 
-// Map platform and architecture to respective folder structure
 const platformFolder = {
   darwin: 'darwin',
   linux: 'linux',
@@ -20,29 +18,32 @@ const archFolder = {
   ia32: '386',
 }[arch] || 'unsupported';
 
-// Additional check for unsupported architectures on Darwin
 if (platform === 'darwin' && (arch === 'arm' || arch === 'ia32')) {
   console.error(`Unsupported architecture on Darwin: ${arch}`);
   process.exit(1);
 }
 
-// Check if platform or architecture is unsupported
 if (platformFolder === 'unsupported' || archFolder === 'unsupported') {
   console.error(`Unsupported platform or architecture: ${platform} ${arch}`);
   process.exit(1);
 }
 
-// Construct the executable path
-const executablePath = path.join('bin', platformFolder, archFolder, platform === 'win32' ? 'ipc-json-bridge.exe' : 'ipc-json-bridge');
+const scriptPath = path.dirname(new URL(import.meta.url).pathname);
+const executablePath = path.resolve(path.join(
+  scriptPath,
+  '..',
+  '..',
+  'bin',
+  platformFolder,
+  archFolder,
+  platform === 'win32' ? 'ipc-json-bridge.exe' : 'ipc-json-bridge'
+));
 
-// Run the executable with inherited stdio
 const result = spawnSync(executablePath, process.argv.slice(2), { stdio: 'inherit' });
 
-// Check if the process failed and log errors if any
 if (result.error) {
   console.error(`Failed to execute ${executablePath}:`, result.error.message);
   process.exit(result.status || 1);
 }
 
-// Exit with the same status code as the spawned process
 process.exit(result.status);

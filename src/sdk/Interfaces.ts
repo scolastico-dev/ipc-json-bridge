@@ -101,4 +101,5 @@ export interface IpcBridgeEvents {
 export interface IpcBridgeOptions {
   socketPath?: string;
   binaryPath?: string;
+  asClient?: boolean;
 }

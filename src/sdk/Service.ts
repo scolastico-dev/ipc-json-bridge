@@ -1,5 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { platform, arch } from 'os';
 import { EventEmitter } from 'events';
 import {
@@ -24,12 +24,15 @@ export class IpcBridge extends EventEmitter {
   private ready = false;
   private readonly binaryPath: string;
   private socketPath: string;
+  private isClient: boolean;
   private stopping = false;
   private startTimeout: NodeJS.Timeout | null = null;
 
   constructor(options: IpcBridgeOptions = {}) {
     super();
+    this.isClient = options.asClient || false;
     this.socketPath = options.socketPath || '';
+    if (this.isClient && !this.socketPath) throw new Error('Client mode requires a socket path');
     this.binaryPath = this.resolveBinaryPath(options.binaryPath);
   }
 
@@ -100,7 +103,7 @@ export class IpcBridge extends EventEmitter {
     }
 
     const executableName = platform() === 'win32' ? 'ipc-json-bridge.exe' : 'ipc-json-bridge';
-    return join('bin', platformFolder, archFolder, executableName);
+    return resolve(join(__dirname, '..', '..', 'bin', platformFolder, archFolder, executableName));
   }
 
   public async start(): Promise<void> {
@@ -109,7 +112,10 @@ export class IpcBridge extends EventEmitter {
     }
 
     return new Promise((resolve, reject) => {
-      const args = this.socketPath ? [this.socketPath] : [];
+      const args = [
+        this.isClient ? '--client' : '--server',
+        ...(this.socketPath ? [this.socketPath] : []),
+      ];
       this.stopping = false;
       this.process = spawn(this.binaryPath, args);
 
@@ -210,6 +216,13 @@ export class IpcBridge extends EventEmitter {
         const parsed = JSON.parse(message) as BaseMessage;
 
         if (parsed.socket && parsed.version) {
+          if (parsed.version !== 1) {
+            this.emit('error', {
+              error: 'Unsupported bridge version',
+              details: `Expected version 1, got ${parsed.version}`
+            });
+            return;
+          }
           this.socketPath = parsed.socket;
           this.ready = true;
           this.emit('ready', parsed as ReadyMessage);

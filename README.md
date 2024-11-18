@@ -1,10 +1,20 @@
 # [IPC JSON Bridge](https://github.com/scolastico-dev/ipc-json-bridge)
 
-A lightweight, cross-platform CLI tool written in Go that enables seamless IPC (Inter-Process Communication) via JSON messages over Unix domain sockets and Windows named pipes. This tool serves as a simpler, more flexible alternative to node-ipc, with added features like sender PID tracking on Unix systems.
+[![LICENSE](https://img.shields.io/github/license/scolastico-dev/ipc-json-bridge)](https://github.com/scolastico-dev/ipc-json-bridge/blob/main/LICENSE)
+[![NPM](https://img.shields.io/npm/v/ipc-json-bridge)](https://www.npmjs.com/package/ipc-json-bridge)
+[![ISSUES](https://img.shields.io/github/issues/scolastico-dev/ipc-json-bridge)](https://github.com/scolastico-dev/ipc-json-bridge/issues)
+[![RELEASES](https://img.shields.io/github/v/release/scolastico-dev/ipc-json-bridge)](https://github.com/scolastico-dev/ipc-json-bridge/releases)
+
+A lightweight, cross-platform CLI tool written in Go that enables
+seamless IPC (Inter-Process Communication) via JSON messages over
+Unix domain sockets and Windows named pipes. This tool serves as
+a simpler, more flexible alternative to node-ipc, with added
+features like sender PID tracking on Unix systems.
 
 ## Overview
 
-IPC JSON Bridge CLI acts as a message relay between standard input/output and an IPC socket. It:
+IPC JSON Bridge CLI acts as a message relay between standard
+input/output and an IPC socket. It:
 
 - Accepts JSON messages from stdin and forwards them to connected clients
 - Receives messages from clients and outputs them as JSON to stdout
@@ -12,6 +22,7 @@ IPC JSON Bridge CLI acts as a message relay between standard input/output and an
 - Supports multiple CPU architectures
 - Provides sender PID information on Unix systems
 - Uses a simple, JSON-based protocol
+- Support server and client mode
 
 ## Installation
 
@@ -25,7 +36,8 @@ npm install ipc-json-bridge
 
 ### Manual Download
 
-Standalone binaries are also available for direct download from the [releases](https://github.com/scolastico-dev/ipc-json-bridge/releases) page.
+Standalone binaries are also available for direct download from the
+[releases](https://github.com/scolastico-dev/ipc-json-bridge/releases) page.
 
 ### Build from Source
 
@@ -78,6 +90,26 @@ bridge.send({
 await bridge.stop();
 ```
 
+### Command Line Usage
+
+```bash
+# Start with generated socket path
+ipc-json-bridge
+
+# Specify custom socket path
+ipc-json-bridge /path/to/socket
+
+# Windows named pipe
+ipc-json-bridge my-pipe-name
+
+# Or connect to an existing socket
+ipc-json-bridge --client /path/to/socket
+
+# For convenience we also provide a --server flag,
+# which is equivalent to the default behavior
+ipc-json-bridge --server /path/to/socket
+```
+
 ### Protocol Specification
 
 If you prefer to implement your own SDK, the bridge uses a simple JSON-based protocol for communication. The following sections provide details on the message format and protocol flow.
@@ -97,7 +129,7 @@ interface Message {
   
   // System fields
   socket?: string;      // Socket path
-  version?: string;     // Protocol version
+  version?: number;     // Protocol version
   
   // Error handling
   error?: string;       // Error description
@@ -110,7 +142,7 @@ interface Message {
 1. **Initialization**
 
    ```json
-   {"socket": "/path/to/socket", "version": "1"}
+   {"socket": "/path/to/socket", "version": 1}
    ```
 
 2. **Client Connection**
@@ -139,19 +171,6 @@ interface Message {
 
 ```json
 {"error": "Error description", "details": "Detailed error information"}
-```
-
-### Command Line Usage
-
-```bash
-# Start with default socket path
-ipc-json-bridge
-
-# Specify custom socket path
-ipc-json-bridge /path/to/socket
-
-# Windows named pipe
-ipc-json-bridge \\.\pipe\my-pipe
 ```
 
 ## Example Communication Flow
@@ -192,7 +211,7 @@ ipc-json-bridge \\.\pipe\my-pipe
 
 ### Windows
 
-- Named pipes follow `\\.\pipe\name` convention
+- Named pipes follow `\\.\pipe\<name>` convention
 - PID tracking not available
 - Different permission model
 
@@ -215,4 +234,6 @@ A short and simple permissive license with conditions only requiring preservatio
 | <details><summary>🟢 Modification</summary>The licensed material may be modified.</details>                                       |                                                                                                                                                              |                                                                                                                        |
 | <details><summary>🟢 Private use</summary>The licensed material may be used and modified in private.</details>                    |                                                                                                                                                              |                                                                                                                        |
 
-*Information provided by https://choosealicense.com/licenses/mit/, this is not legal advice.*
+*Information provided by
+[https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/mit/),
+this is not legal advice.*
