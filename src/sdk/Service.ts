@@ -1,5 +1,6 @@
 import { spawn, ChildProcess } from 'child_process';
 import { join, resolve } from 'path';
+import { existsSync, statSync, chmodSync } from 'fs';
 import { platform, arch } from 'os';
 import { EventEmitter } from 'events';
 import {
@@ -34,6 +35,9 @@ export class IpcBridge extends EventEmitter {
     this.socketPath = options.socketPath || '';
     if (this.isClient && !this.socketPath) throw new Error('Client mode requires a socket path');
     this.binaryPath = this.resolveBinaryPath(options.binaryPath);
+    if (!existsSync(this.binaryPath)) {
+      throw new Error(`IPC bridge binary not found: ${this.binaryPath}`);
+    }
   }
 
   // Type-safe event emitter methods
@@ -110,6 +114,9 @@ export class IpcBridge extends EventEmitter {
     if (this.process) {
       throw new Error('IPC bridge is already running');
     }
+
+    const stats = statSync(this.binaryPath);
+    if (!(stats.mode & 0o100)) chmodSync(this.binaryPath, stats.mode | 0o100);
 
     return new Promise((resolve, reject) => {
       const args = [

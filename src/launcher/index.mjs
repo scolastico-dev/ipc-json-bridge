@@ -1,6 +1,7 @@
 import { spawnSync } from 'child_process';
 import os from 'os';
 import path from 'path';
+import { chmodSync, statSync } from 'fs';
 
 const platform = os.platform();
 const arch = os.arch();
@@ -38,6 +39,14 @@ const executablePath = path.resolve(path.join(
   archFolder,
   platform === 'win32' ? 'ipc-json-bridge.exe' : 'ipc-json-bridge'
 ));
+
+try {
+  const stats = statSync(executablePath);
+  if (!(stats.mode & 0o100)) chmodSync(executablePath, stats.mode | 0o100);
+} catch (error) {
+  console.error(`Failed to check/fix permissions for ${executablePath}:`, error.message);
+  process.exit(1);
+}
 
 const result = spawnSync(executablePath, process.argv.slice(2), { stdio: 'inherit' });
 
